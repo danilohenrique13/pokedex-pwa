@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore, pesquise e descubra Pokémon em uma Pokédex interativa.">
+  <meta name="theme-color" content="#10131b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Pokédex">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Pokédex — Explore o mundo Pokémon</title>
+  <link rel="preconnect" href="https://pokeapi.co">
+  <link rel="preconnect" href="https://raw.githubusercontent.com">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Pular para o conteúdo</a>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Pokédex, página inicial">
+      <span class="brand-mark" aria-hidden="true"><span></span></span>
+      <span>Poké<span class="brand-accent">dex</span></span>
+    </a>
+    <span class="topbar-note"><span class="status-dot"></span> Explorador Pokémon</span>
+  </header>
+
+  <div class="app-tools" aria-label="Ferramentas do aplicativo">
+    <p id="connection-status" class="connection-status" role="status">Verificando conexão…</p>
+    <button id="install-button" class="install-button" type="button" hidden>Instalar aplicativo</button>
+  </div>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <p class="eyebrow">ENCICLOPÉDIA INTERATIVA</p>
+        <h1 id="page-title">Descubra seu<br><span>próximo Pokémon.</span></h1>
+        <p class="hero-description">Pesquise, explore e conheça os detalhes dos seus Pokémon favoritos em um só lugar.</p>
+        <div class="hero-meta">
+          <span><strong id="pokemon-count">—</strong> Pokémon para descobrir</span>
+          <span class="meta-divider" aria-hidden="true"></span>
+          <span>Dados atualizados via PokéAPI</span>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <div class="hero-ball"><div class="ball-top"></div><div class="ball-center"></div></div>
+        <span class="spark spark-one">✦</span><span class="spark spark-two">✧</span>
+      </div>
+    </section>
+
+    <section class="explorer" aria-labelledby="explorer-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">SUA JORNADA COMEÇA AQUI</p>
+          <h2 id="explorer-title">Explore os Pokémon</h2>
+        </div>
+        <p class="results-label" id="results-label" aria-live="polite">Carregando catálogo…</p>
+      </div>
+
+      <form class="toolbar" id="search-form" role="search">
+        <label class="search-box" for="search-input">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 4 4"></path></svg>
+          <input id="search-input" type="search" placeholder="Buscar por nome ou número…" autocomplete="off">
+          <kbd>ENTER</kbd>
+        </label>
+        <label class="filter-control" for="type-filter">
+          <span>Tipo</span>
+          <select id="type-filter">
+            <option value="all">Todos os tipos</option>
+            <option value="normal">Normal</option><option value="fire">Fogo</option>
+            <option value="water">Água</option><option value="electric">Elétrico</option>
+            <option value="grass">Planta</option><option value="ice">Gelo</option>
+            <option value="fighting">Lutador</option><option value="poison">Veneno</option>
+            <option value="ground">Terra</option><option value="flying">Voador</option>
+            <option value="psychic">Psíquico</option><option value="bug">Inseto</option>
+            <option value="rock">Pedra</option><option value="ghost">Fantasma</option>
+            <option value="dragon">Dragão</option><option value="dark">Sombrio</option>
+            <option value="steel">Aço</option><option value="fairy">Fada</option>
+          </select>
+        </label>
+      </form>
+
+      <div class="type-shortcuts" aria-label="Filtros rápidos por tipo">
+        <button class="type-chip active" data-type="all" type="button" aria-pressed="true">Todos</button>
+        <button class="type-chip" data-type="fire" type="button" aria-pressed="false">🔥 Fogo</button>
+        <button class="type-chip" data-type="water" type="button" aria-pressed="false">💧 Água</button>
+        <button class="type-chip" data-type="grass" type="button" aria-pressed="false">🌿 Planta</button>
+        <button class="type-chip" data-type="electric" type="button" aria-pressed="false">⚡ Elétrico</button>
+        <button class="type-chip" data-type="psychic" type="button" aria-pressed="false">🔮 Psíquico</button>
+      </div>
+
+      <div class="state-message" id="state-message" role="status">
+        <span class="loader" aria-hidden="true"></span>
+        <span>Buscando Pokémon…</span>
+      </div>
+      <div class="pokemon-grid" id="pokemon-grid" aria-live="polite" aria-busy="true"></div>
+      <div class="load-more-wrap">
+        <button class="load-more" id="load-more" type="button" hidden>Carregar mais Pokémon <span aria-hidden="true">↓</span></button>
+      </div>
+    </section>
+  </main>
+
+  <section class="camera-section" aria-labelledby="camera-title">
+    <div class="camera-copy">
+      <p class="eyebrow">RECURSO DO DISPOSITIVO</p>
+      <h2 id="camera-title">Foto do Treinador</h2>
+      <p>Use a câmera do seu dispositivo para registrar sua jornada. A foto fica salva somente neste aparelho.</p>
+      <div class="camera-actions">
+        <button id="camera-start" class="camera-button primary" type="button">Abrir câmera</button>
+        <button id="camera-capture" class="camera-button" type="button" disabled>Capturar foto</button>
+        <button id="camera-stop" class="camera-button" type="button" disabled>Fechar câmera</button>
+      </div>
+      <p id="camera-message" class="camera-message" role="status" aria-live="polite">A câmera só será ativada quando você tocar em “Abrir câmera”.</p>
+    </div>
+    <div class="camera-panel">
+      <video id="camera-video" autoplay playsinline muted hidden aria-label="Pré-visualização da câmera"></video>
+      <canvas id="camera-canvas" hidden></canvas>
+      <div id="camera-placeholder" class="camera-placeholder">
+        <span aria-hidden="true">◎</span>
+        <p>A pré-visualização da câmera aparecerá aqui.</p>
+      </div>
+      <div id="photo-result" class="photo-result" hidden>
+        <img id="saved-photo" alt="Foto do treinador salva neste dispositivo">
+        <button id="photo-remove" class="photo-remove" type="button">Remover foto</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <a class="brand footer-brand" href="#"><span class="brand-mark" aria-hidden="true"><span></span></span><span>Poké<span class="brand-accent">dex</span></span></a>
+    <p>Projeto acadêmico desenvolvido com HTML, CSS, JavaScript e PokéAPI.</p>
+    <a href="https://pokeapi.co/" target="_blank" rel="noopener noreferrer">Dados fornecidos pela PokéAPI ↗</a>
+  </footer>
+
+  <dialog class="pokemon-dialog" id="pokemon-dialog" aria-labelledby="dialog-name">
+    <button class="dialog-close" id="dialog-close" type="button" aria-label="Fechar detalhes">×</button>
+    <div id="dialog-content"></div>
+  </dialog>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js", { updateViaCache: "none" })
+          .catch(error => console.error("Falha ao registrar o Service Worker:", error));
+      });
+    }
+  </script>
+</body>
+</html>
